@@ -59,6 +59,10 @@
             height: 100%;
             object-fit: cover;
         }
+        
+        .app-icon-large.empty {
+            display: none;
+        }
 
         .app-title {
             font-size: 32px;
@@ -373,6 +377,9 @@
             headerIconEl.alt = appName;
             headerTitleEl.textContent = appName;
             
+            // 移除空状态类，显示图标
+            document.getElementById('headerIcon').classList.remove('empty');
+            
             // 加载应用介绍
             loadAppIntro(introPath);
             
@@ -417,6 +424,9 @@
         // ==================== 页面加载时执行 ====================
         window.addEventListener('DOMContentLoaded', () => {
             initAppList();
+            
+            // 初始状态下隐藏大图标，只显示标题
+            document.getElementById('headerIcon').classList.add('empty');
             
             // 默认选中第一个应用（可选）
             // if (appData.length > 0) {
