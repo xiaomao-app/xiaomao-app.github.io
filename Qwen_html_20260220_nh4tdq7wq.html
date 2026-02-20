@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>应用商店</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* 深色主题 - GitHub Dark */
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --bg-canvas: #010409;
+            --border-color: #30363d;
+            --border-muted: #21262d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --text-link: #58a6ff;
+            --accent-blue: #58a6ff;
+            --accent-green: #238636;
+            --accent-green-hover: #2ea043;
+            --button-hover: #30363d;
+            --input-bg: #0d1117;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        /* 浅色主题 - GitHub Light */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --bg-canvas: #ffffff;
+            --border-color: #d0d7de;
+            --border-muted: #eaeef2;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --text-link: #0969da;
+            --accent-blue: #0969da;
+            --accent-green: #1a7f37;
+            --accent-green-hover: #1f8a3d;
+            --button-hover: #eaeef2;
+            --input-bg: #ffffff;
+            --shadow-color: rgba(27, 31, 36, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* 顶部导航栏 */
+        .navbar {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-blue), #8e949f);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        /* 导航菜单 */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background-color: var(--button-hover);
+        }
+
+        .nav-item.active {
+            color: var(--text-primary);
+            background-color: var(--bg-tertiary);
+            border-color: var(--border-color);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-button {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .nav-button:hover {
+            background: var(--button-hover);
+            border-color: var(--text-secondary);
+        }
+
+        /* 主题切换下拉菜单 */
+        .theme-selector {
+            position: relative;
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            min-width: 120px;
+            justify-content: space-between;
+        }
+
+        .theme-toggle:hover {
+            background: var(--button-hover);
+            border-color: var(--text-secondary);
+        }
+
+        .theme-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            right: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: 0 8px 24px var(--shadow-color);
+            min-width: 160px;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .theme-dropdown.show {
+            display: block;
+        }
+
+        .theme-option {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-option:hover {
+            background: var(--button-hover);
+        }
+
+        .theme-option.active {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+        }
+
+        .theme-option svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0;
+        }
+
+        .theme-option.active svg {
+            opacity: 1;
+        }
+
+        /* 主容器 */
+        .container {
+            display: flex;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px 16px;
+            gap: 24px;
+        }
+
+        /* 左侧边栏 */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            padding: 0 8px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .app-list {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .app-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid var(--border-muted);
+            gap: 12px;
+        }
+
+        .app-item:last-child {
+            border-bottom: none;
+        }
+
+        .app-item:hover {
+            background: var(--button-hover);
+        }
+
+        .app-item.active {
+            background: var(--bg-tertiary);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .app-icon-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .app-icon-small img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 2px;
+        }
+
+        .app-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .content-header {
+            margin-bottom: 24px;
+        }
+
+        .content-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .content-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Feed 区域 */
+        .feed {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .feed-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .feed-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feed-link {
+            color: var(--text-link);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .feed-link:hover {
+            text-decoration: underline;
+        }
+
+        .feed-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-muted);
+            transition: background 0.2s;
+        }
+
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+
+        .feed-item:hover {
+            background: var(--button-hover);
+        }
+
+        .feed-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .feed-repo-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-link);
+            text-decoration: none;
+        }
+
+        .feed-repo-name:hover {
+            text-decoration: underline;
+        }
+
+        .feed-description {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .feed-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .feed-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .star-button {
+            margin-left: auto;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .star-button:hover {
+            background: var(--button-hover);
+            border-color: var(--text-secondary);
+        }
+
+        /* 底部下载按钮 */
+        .download-area {
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .download-btn {
+            background: var(--accent-green);
+            border: 1px solid rgba(27, 31, 36, 0.15);
+            color: #ffffff;
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .download-btn:hover {
+            background: var(--accent-green-hover);
+        }
+
+        .download-btn:disabled {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            border-color: var(--border-color);
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .navbar {
+                padding: 12px 16px;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .content-title {
+                font-size: 24px;
+            }
+        }
+
+        /* 欢迎页面样式 */
+        .welcome-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .welcome-message h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .welcome-message p {
+            font-size: 16px;
+        }
+
+        /* 详情内容样式 */
+        .detail-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 24px;
+            line-height: 1.6;
+        }
+
+        .detail-content h2 {
+            color: var(--text-primary);
+            margin: 24px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 24px;
+        }
+
+        .detail-content h3 {
+            color: var(--text-primary);
+            margin: 20px 0 12px 0;
+            font-size: 18px;
+        }
+
+        .detail-content p {
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .detail-content a {
+            color: var(--text-link);
+            text-decoration: none;
+        }
+
+        .detail-content a:hover {
+            text-decoration: underline;
+        }
+
+        .detail-content ul, .detail-content ol {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+
+        .detail-content li {
+            margin-bottom: 8px;
+        }
+
+        .detail-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 85%;
+        }
+
+        .detail-content pre {
+            background: var(--bg-tertiary);
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        .detail-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .detail-content img {
+            max-width: 100%;
+            border-radius: 6px;
+            margin: 16px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        /* 页面内容区域 */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* 关于我们页面样式 */
+        .about-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 32px;
+        }
+
+        .about-content h2 {
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-size: 24px;
+        }
+
+        .about-content p {
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .about-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .feature-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+        }
+
+        .feature-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="#" class="logo">
+                <div class="logo-icon">📦</div>
+                <span>应用商店</span>
+            </a>
+            <div class="nav-menu">
+                <a class="nav-item active" data-page="store" onclick="switchPage('store')">应用商店</a>
+                <a class="nav-item" data-page="about" onclick="switchPage('about')">关于我们</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            <button class="nav-button" onclick="document.getElementById('searchInput').focus()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                搜索
+            </button>
+            
+            <!-- 主题切换下拉菜单 -->
+            <div class="theme-selector">
+                <button class="theme-toggle" id="themeToggle">
+                    <span id="themeLabel">跟随系统</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 4px;">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <div class="theme-dropdown" id="themeDropdown">
+                    <div class="theme-option active" data-theme="system">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>跟随系统</span>
+                    </div>
+                    <div class="theme-option" data-theme="light">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>浅色</span>
+                    </div>
+                    <div class="theme-option" data-theme="dark">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>深色</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-title">应用列表</div>
+            
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="查找应用..." id="searchInput">
+            </div>
+            
+            <div class="app-list" id="appList"></div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 应用商店页面 -->
+            <div class="page-section active" id="page-store">
+                <div class="content-header">
+                    <h1 class="content-title" id="headerTitle">应用商店</h1>
+                    <p class="content-subtitle">发现和管理您的应用程序</p>
+                </div>
+
+                <!-- Feed 区域 -->
+                <div class="feed" id="feedArea">
+                    <div class="feed-header">
+                        <div class="feed-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 3v18h18"></path>
+                                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path>
+                            </svg>
+                            精选应用
+                        </div>
+                        <a href="#" class="feed-link">See more</a>
+                    </div>
+                    <div id="feedContent">
+                        <div class="welcome-message">
+                            <h2>欢迎浏览应用商店！</h2>
+                            <p>请点击左侧的应用查看详细介绍。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 应用详情区域（默认隐藏） -->
+                <div id="appDetail" style="display: none;">
+                    <div class="detail-content" id="appContent"></div>
+                    <div class="download-area">
+                        <button class="download-btn" id="downloadBtn" disabled>前往下载</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 关于我们页面 -->
+            <div class="page-section" id="page-about">
+                <div class="content-header">
+                    <h1 class="content-title">关于我们</h1>
+                    <p class="content-subtitle">了解我们的团队和使命</p>
+                </div>
+
+                <div class="about-content">
+                    <h2>应用商店简介</h2>
+                    <p>
+                        我们致力于为用户提供安全、便捷、高质量的应用程序下载服务。
+                        所有应用都经过严格审核，确保无病毒、无恶意代码。
+                    </p>
+                    <p>
+                        我们的应用商店完全免费开放，所有应用均为开源项目，
+                        欢迎开发者提交自己的作品。
+                    </p>
+
+                    <div class="about-features">
+                        <div class="feature-card">
+                            <h3>🔒 安全可靠</h3>
+                            <p>所有应用经过安全扫描，确保无恶意代码</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🆓 完全免费</h3>
+                            <p>所有应用免费下载使用，无隐藏费用</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>📱 跨平台支持</h3>
+                            <p>支持 Windows、macOS、Linux 等多个平台</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🔄 持续更新</h3>
+                            <p>定期更新应用，保持最新版本</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-color);">
+                        <h3 style="color: var(--text-primary); margin-bottom: 12px;">联系我们</h3>
+                        <p style="color: var(--text-secondary);">
+                            如有任何问题或建议，欢迎通过以下方式联系我们：
+                        </p>
+                        <p style="color: var(--text-link); margin-top: 8px;">
+                            📧 Email: support@appstore.com<br>
+                            💬 GitHub: github.com/appstore
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ==================== 应用数据配置 ====================
+        // 格式: [图标路径, 应用名称, 介绍HTML路径, 下载链接]
+        const appData = [
+            [
+                "icons/music_player.png",
+                "音乐播放器",
+                "intro/music_player.html",
+                "https://example.com/music"
+            ],
+            [
+                "icons/encryptor.png",
+                "哈希加密器",
+                "intro/encryptor.html",
+                "https://example.com/encryptor"
+            ],
+            [
+                "icons/notes.png",
+                "笔记应用",
+                "intro/notes.html",
+                "https://example.com/notes"
+            ],
+            [
+                "icons/editor.png",
+                "图像编辑器",
+                "intro/editor.html",
+                "https://example.com/editor"
+            ],
+            [
+                "icons/analytics.png",
+                "数据分析工具",
+                "intro/analytics.html",
+                "https://example.com/analytics"
+            ]
+        ];
+
+        // ==================== 全局变量 ====================
+        let currentAppIndex = -1;
+        let currentPage = 'store';
+        const appListEl = document.getElementById('appList');
+        const appContentEl = document.getElementById('appContent');
+        const headerTitleEl = document.getElementById('headerTitle');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const feedArea = document.getElementById('feedArea');
+        const appDetail = document.getElementById('appDetail');
+        const feedContent = document.getElementById('feedContent');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeDropdown = document.getElementById('themeDropdown');
+        const themeLabel = document.getElementById('themeLabel');
+        const themeOptions = document.querySelectorAll('.theme-option');
+        const sidebar = document.getElementById('sidebar');
+        const searchInput = document.getElementById('searchInput');
+
+        // ==================== 页面切换功能 ====================
+        function switchPage(pageName) {
+            currentPage = pageName;
+            
+            // 更新导航栏激活状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.page === pageName);
+            });
+            
+            // 更新页面显示
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.toggle('active', section.id === `page-${pageName}`);
+            });
+            
+            // 控制侧边栏显示（仅在应用商店页面显示）
+            sidebar.style.display = pageName === 'store' ? 'block' : 'none';
+            
+            // 重置应用选择状态
+            if (pageName !== 'store') {
+                resetToHome();
+            }
+        }
+
+        // ==================== 主题切换功能 ====================
+        const themeLabels = {
+            'system': '跟随系统',
+            'light': '浅色',
+            'dark': '深色'
+        };
+
+        // 检测系统主题
+        function getSystemTheme() {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        // 应用主题
+        function applyTheme(theme) {
+            if (theme === 'system') {
+                const systemTheme = getSystemTheme();
+                if (systemTheme === 'dark') {
+                    document.documentElement.removeAttribute('data-theme');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+            } else if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+            }
+        }
+
+        // 初始化主题
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            applyTheme(savedTheme);
+            updateThemeUI(savedTheme);
+            
+            // 监听系统主题变化
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                const currentTheme = localStorage.getItem('theme') || 'system';
+                if (currentTheme === 'system') {
+                    applyTheme('system');
+                }
+            });
+        }
+
+        // 更新主题 UI
+        function updateThemeUI(theme) {
+            themeLabel.textContent = themeLabels[theme];
+            themeOptions.forEach(option => {
+                option.classList.toggle('active', option.dataset.theme === theme);
+            });
+        }
+
+        // 切换主题
+        function setTheme(theme) {
+            localStorage.setItem('theme', theme);
+            applyTheme(theme);
+            updateThemeUI(theme);
+            themeDropdown.classList.remove('show');
+        }
+
+        // 主题切换按钮事件
+        themeToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeDropdown.classList.toggle('show');
+        });
+
+        // 主题选项点击事件
+        themeOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const theme = option.dataset.theme;
+                setTheme(theme);
+            });
+        });
+
+        // 点击其他地方关闭下拉菜单
+        document.addEventListener('click', () => {
+            themeDropdown.classList.remove('show');
+        });
+
+        // ==================== 初始化函数 ====================
+        function initAppList() {
+            appListEl.innerHTML = '';
+            
+            appData.forEach((app, index) => {
+                const [iconPath, appName] = app;
+                
+                const appItem = document.createElement('div');
+                appItem.className = 'app-item';
+                appItem.dataset.index = index;
+                
+                appItem.innerHTML = `
+                    <div class="app-icon-small">
+                        <img src="${iconPath}" alt="${appName}" onerror="this.parentElement.innerHTML='📦'">
+                    </div>
+                    <div class="app-name">${appName}</div>
+                `;
+                
+                appItem.addEventListener('click', () => selectApp(index));
+                appListEl.appendChild(appItem);
+            });
+        }
+
+        // 选择应用
+        function selectApp(index) {
+            currentAppIndex = index;
+            const [iconPath, appName, introPath, downloadUrl] = appData[index];
+            
+            // 更新左侧选中状态
+            document.querySelectorAll('.app-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+            
+            // 更新标题
+            headerTitleEl.textContent = appName;
+            
+            // 显示详情区域，隐藏 feed
+            feedArea.style.display = 'none';
+            appDetail.style.display = 'block';
+            
+            // 加载应用介绍
+            loadAppIntro(introPath);
+            
+            // 启用下载按钮
+            downloadBtn.disabled = false;
+            downloadBtn.onclick = () => window.open(downloadUrl, '_blank');
+        }
+
+        // 重置到初始状态
+        function resetToHome() {
+            currentAppIndex = -1;
+            headerTitleEl.textContent = '应用商店';
+            
+            // 隐藏详情区域，显示 feed
+            appDetail.style.display = 'none';
+            feedArea.style.display = 'block';
+            
+            // 重置左侧选中状态
+            document.querySelectorAll('.app-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 禁用下载按钮
+            downloadBtn.disabled = true;
+            downloadBtn.onclick = null;
+        }
+
+        // 加载应用介绍
+        function loadAppIntro(filePath) {
+            appContentEl.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    正在加载...
+                </div>
+            `;
+            
+            fetch(filePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('文件加载失败');
+                    }
+                    return response.text();
+                })
+                .then(htmlContent => {
+                    appContentEl.innerHTML = htmlContent;
+                })
+                .catch(error => {
+                    appContentEl.innerHTML = `
+                        <div style="color: #f85149; padding: 20px;">
+                            <h3>❌ 无法加载介绍内容</h3>
+                            <p>${error.message}</p>
+                            <p style="margin-top: 10px; color: var(--text-secondary);">
+                                请确保文件路径正确且文件存在。
+                            </p>
+                        </div>
+                    `;
+                    console.error('加载失败:', error);
+                });
+        }
+
+        // 搜索功能 - 确保真正可用
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            const appItems = document.querySelectorAll('.app-item');
+            
+            appItems.forEach((item, index) => {
+                const appName = appData[index][1].toLowerCase();
+                
+                if (searchTerm === '') {
+                    // 搜索框为空时显示所有应用
+                    item.style.display = 'flex';
+                } else if (appName.includes(searchTerm)) {
+                    // 应用名称包含搜索文本时显示
+                    item.style.display = 'flex';
+                } else {
+                    // 否则隐藏
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // 点击标题返回首页
+        headerTitleEl.addEventListener('click', () => {
+            if (currentAppIndex !== -1) {
+                resetToHome();
+            }
+        });
+
+        // ==================== 页面加载时执行 ====================
+        window.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            initAppList();
+            switchPage('store'); // 默认显示应用商店页面
+        });
+    </script>
+</body>
+</html>
